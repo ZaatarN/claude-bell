@@ -41,4 +41,24 @@ for player in mpg123 ffplay mpv cvlc paplay aplay pw-play; do
   fi
 done
 
+# Windows (Git Bash / MSYS / Cygwin): use .NET WPF MediaPlayer via PowerShell.
+# Listed last so WSL still prefers native Linux players above.
+if command -v powershell.exe >/dev/null 2>&1; then
+  if command -v cygpath >/dev/null 2>&1; then
+    win_path=$(cygpath -w "$sound_file" 2>/dev/null || printf %s "$sound_file")
+  else
+    win_path="$sound_file"
+  fi
+  (
+    BELL_PATH="$win_path" powershell.exe -NoProfile -NonInteractive -Command \
+      'Add-Type -AssemblyName presentationCore;
+       $p = New-Object System.Windows.Media.MediaPlayer;
+       $p.Open([uri]$env:BELL_PATH);
+       $p.Play();
+       Start-Sleep -Seconds 5' >/dev/null 2>&1
+  ) &
+  disown 2>/dev/null || true
+  exit 0
+fi
+
 exit 0
