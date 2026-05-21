@@ -4,32 +4,33 @@ Three short bell samples played by Claude Code hooks.
 
 | File | When it plays | Character |
 |---|---|---|
-| `attention.wav`  | `Notification` event       | Single bright bell (~3.2 kHz, ~400 ms) |
-| `permission.wav` | `PermissionRequest` event  | Single lower bell (~2.6 kHz, ~450 ms) |
-| `done.wav`       | `Stop` event               | Two bells, ding-ding (~950 ms) |
+| `attention.mp3`  | `Notification` event       | Single bright bell (~3.2 kHz, ~400 ms) |
+| `permission.mp3` | `PermissionRequest` event  | Single lower bell (~2.6 kHz, ~450 ms) |
+| `done.mp3`       | `Stop` event               | Two bells, ding-ding (~950 ms) |
 
-All three are 44.1 kHz mono 16-bit PCM WAVs, synthesized from a sum of
-decaying sinusoids (fundamental + harmonic + inharmonic partials) for
-that metallic hotel-counter-bell timbre.
+> ⚠️ **These are placeholders.** They're synthesized hotel-bell stand-ins
+> so the hook works the moment you install — replace them with your own
+> sounds whenever you're ready.
 
 ---
 
 ## Swap your own sounds
 
-Drop a `.wav` of the same name into `~/.claude/bell/sounds/` after
+Drop an `.mp3` of the same name into `~/.claude/bell/sounds/` after
 installing — the installer won't overwrite existing files on re-run.
 
 ```bash
-cp my-chime.wav ~/.claude/bell/sounds/attention.wav
+cp my-chime.mp3 ~/.claude/bell/sounds/attention.mp3
 ```
 
 ### Tips
 
 - **Keep single chimes under ~500 ms.** Anything longer overlaps your
   next prompt and feels laggy.
-- **WAV, 16-bit, 44.1 kHz, mono** is the most portable format —
-  `afplay`, `paplay`, `aplay`, and `pw-play` all play it without
-  conversion.
+- **MP3 is the default**, but the player will happily play `.wav`,
+  `.m4a`, `.ogg`, or anything else `afplay` / `ffplay` understands. If
+  you switch formats, rename the file *and* update the hook command in
+  `~/.claude/settings.json` to point at the new extension.
 - **Free sources for bells, chimes, and dings:**
   [Freesound.org](https://freesound.org),
   [Mixkit](https://mixkit.co/free-sound-effects/bell/),
@@ -37,31 +38,20 @@ cp my-chime.wav ~/.claude/bell/sounds/attention.wav
 - **Test a file** before committing to it:
 
   ```bash
-  afplay ~/.claude/bell/sounds/attention.wav   # macOS
-  paplay ~/.claude/bell/sounds/attention.wav   # Linux (PulseAudio)
+  afplay ~/.claude/bell/sounds/attention.mp3   # macOS
+  mpg123 ~/.claude/bell/sounds/attention.mp3   # Linux
   ```
 
 ### Generate a voice clip on macOS
 
-The built-in `say` command turns text into spoken audio. Pipe it
-through `afconvert` to get a hook-compatible WAV:
+The built-in `say` command turns text into spoken audio:
 
 ```bash
-say -v Samantha "Claude is done" -o /tmp/done.aiff && \
-  afconvert /tmp/done.aiff ~/.claude/bell/sounds/done.wav -d LEI16
+say -v Samantha "Claude is done" -o /tmp/done.aiff
+afconvert /tmp/done.aiff ~/.claude/bell/sounds/done.m4a -d aac -f m4af
+# then rename done.mp3 -> done.m4a and edit the hook command, OR
+# encode to mp3 with `lame` / `ffmpeg` if you have them installed.
 ```
 
 Other fun voices to try: `Daniel`, `Karen`, `Moira`, `Alex`. Run
 `say -v '?'` to list everything installed.
-
-### Regenerate the bundled bells
-
-If you ever want to tweak the synthesized originals (different pitch,
-harder strike, slower decay), edit `generate_sounds.py` at the repo
-root and run:
-
-```bash
-python3 generate_sounds.py
-```
-
-It only depends on `numpy` and the Python stdlib `wave` module.

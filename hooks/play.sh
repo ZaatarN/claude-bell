@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # claude-bell: play a notification sound in the background.
 #
-# Usage: play.sh <path-to-wav>
+# Usage: play.sh <path-to-audio-file>
 #
 # Tries audio players in order of preference for the host platform.
 # Exits silently (0) if the file doesn't exist, no player is available,
@@ -21,17 +21,20 @@ play_with() {
   disown 2>/dev/null || true
 }
 
-# macOS: afplay ships with every install.
+# macOS: afplay ships with every install and handles mp3 natively.
 if command -v afplay >/dev/null 2>&1; then
   play_with afplay
   exit 0
 fi
 
-# Linux: try common players in order of likelihood on a modern desktop.
-for player in paplay aplay pw-play ffplay; do
+# Linux: prefer players that decode mp3 without extra plugins.
+for player in mpg123 ffplay mpv cvlc paplay aplay pw-play; do
   if command -v "$player" >/dev/null 2>&1; then
     case "$player" in
+      mpg123) play_with mpg123 -q ;;
       ffplay) play_with ffplay -nodisp -autoexit -loglevel quiet ;;
+      mpv)    play_with mpv --really-quiet --no-video ;;
+      cvlc)   play_with cvlc --play-and-exit --quiet ;;
       *)      play_with "$player" ;;
     esac
     exit 0

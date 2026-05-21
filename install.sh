@@ -43,7 +43,7 @@ cp "$src_dir/hooks/play.sh" "$hooks_dest/play.sh"
 chmod +x "$hooks_dest/play.sh"
 ok "installed player → ${DIM}$hooks_dest/play.sh${RESET}"
 
-for sound in attention.wav done.wav permission.wav; do
+for sound in attention.mp3 done.mp3 permission.mp3; do
   if [[ -f "$sounds_dest/$sound" ]]; then
     info "kept existing ${DIM}$sounds_dest/$sound${RESET}"
   else
@@ -80,9 +80,9 @@ except json.JSONDecodeError as e:
     sys.exit(1)
 
 event_to_sound = {
-    "Stop":              "done.wav",
-    "Notification":      "attention.wav",
-    "PermissionRequest": "permission.wav",
+    "Stop":              "done.mp3",
+    "Notification":      "attention.mp3",
+    "PermissionRequest": "permission.mp3",
 }
 
 hooks = data.setdefault("hooks", {})
@@ -131,9 +131,9 @@ ok "merged hooks + permissions into ${DIM}$settings_file${RESET}"
 # --- summary --------------------------------------------------------------
 say ""
 say "${BOLD}Event map${RESET}"
-printf "  ${CYAN}%-18s${RESET}  ${DIM}→${RESET}  %s\n" "attention.wav"  "Notification        (1 bell — Claude needs your attention)"
-printf "  ${CYAN}%-18s${RESET}  ${DIM}→${RESET}  %s\n" "permission.wav" "PermissionRequest   (1 bell — Claude wants approval)"
-printf "  ${CYAN}%-18s${RESET}  ${DIM}→${RESET}  %s\n" "done.wav"       "Stop                (2 bells — Claude is done)"
+printf "  ${CYAN}%-18s${RESET}  ${DIM}→${RESET}  %s\n" "attention.mp3"  "Notification        (1 bell — Claude needs your attention)"
+printf "  ${CYAN}%-18s${RESET}  ${DIM}→${RESET}  %s\n" "permission.mp3" "PermissionRequest   (1 bell — Claude wants approval)"
+printf "  ${CYAN}%-18s${RESET}  ${DIM}→${RESET}  %s\n" "done.mp3"       "Stop                (2 bells — Claude is done)"
 say ""
 say "${BOLD}${GREEN}✓ Installed.${RESET} Restart Claude Code to activate."
 say ""
